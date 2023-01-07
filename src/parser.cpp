@@ -5,13 +5,13 @@
 #include <iostream>
 
 /* Provides a function scope instead of a normal scope. This means you can return a value from it. */
-#define SCOPE(SCOPE_body) ([&]() { SCOPE_body; })()
+#define SCOPE(SCOPE_body) (([&]() { SCOPE_body; })())
 #define LOOP while (true)
 
 namespace Parser {
 
 	bool isSpecial(char c) {
-		return (c == '(') || (c == ')');
+		return (c == '(') || (c == ')') || (c == ':');
 	}
 
 	unsigned int decimalCharToDigit(char c) {
@@ -157,7 +157,7 @@ namespace Parser {
 		status.valid = SCOPE(
 		                     char c;
 		                     c = source.peek();
-		                     if (!std::isprint(c) || isSpecial(c)) {
+		                     if (!std::isprint(c) || ((c != ':') && isSpecial(c))) {
 			                     return NEXT;
 		                     }
 		                     // Definitely an identifier.
@@ -197,6 +197,46 @@ namespace Parser {
 			if (status.valid != NEXT) {
 				break;
 			}
+		}
+		if (status.valid == SUCCESS) {
+			// Check for type annotations.
+			status.valid = SCOPE(
+			                     ParserStream source2{source};
+			                     ParserStatus status2;
+			                     char c;
+			                     status2 = parseWhitespace(source2);
+			                     if (status2.valid != SUCCESS) {
+				                     // It's fine to end the form here.
+				                     return SUCCESS;
+			                     }
+			                     c = source2.peek();
+			                     if (c != ':') {
+				                     // No annotation.
+				                     return SUCCESS;
+			                     }
+			                     source2.read();
+			                     c = source2.peek();
+			                     if (c != ':') {
+				                     // Might be a keyword argument.
+				                     return SUCCESS;
+			                     }
+			                     source2.read();
+			                     status2 = parseWhitespace(source2);
+			                     if (status2.valid != SUCCESS) {
+				                     status.errors.push_back(source.coordsToString() + ": Expected type annotation.");
+				                     return FAIL;
+			                     }
+			                     status2 = parseCompoundForm(source2);
+			                     if (status2.valid != SUCCESS) {
+				                     return FAIL;
+			                     }
+			                     source2.consume();
+			                     status.form.typeAnnotation = new Form();
+			                     *status.form.typeAnnotation = status2.form;
+			                     return SUCCESS;);
+		}
+		if (status.valid == SUCCESS) {
+			source.consume();
 		}
 		return status;
 	}

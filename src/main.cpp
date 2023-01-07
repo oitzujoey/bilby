@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
 			return 1;
 		}
 		std::cout << status.prettyPrint() << std::endl;
+		std::cout << status.form.toString() << std::endl;
 	}
 
 	return 0;

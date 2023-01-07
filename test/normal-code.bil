@@ -1,0 +1,4 @@
+(defun factorial (n::(ui a))::(ui a)
+  (if (> n 0)
+      (* n (factorial (- n 1)))
+      1))
