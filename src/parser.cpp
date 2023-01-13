@@ -244,6 +244,12 @@ namespace Parser {
 	ParserStatus parse(ParserStream source) {
 		ParserStatus status;
 		Forms *forms = new Forms();
+		{
+			Form toplevel{};
+			toplevel.type = IDENTIFIER;
+			toplevel.identifier = new std::string("toplevel");
+			forms->push_back(toplevel);
+		}
 		status.valid = SCOPE(
 		                     LOOP {
 			                     status = parseWhitespace(source);

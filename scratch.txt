@@ -1,1 +1,11 @@
 Do parallel build when possible.
+
+Types should be resolved after macro expansion.
+
+The Common Lisp macro system actually has a problem similar to this. In Bilby, we want macros to be aware of types, but type inference has to be done after macro expansion. In CL, macros sometimes need to run `macroexpand-all` on the code they are passed. So I think the solution for Bilby is to have `macroexpand-all` and `resolve-types` functions.
+
+Keywords:
+
+
+
+Short Term Goal: Link with SDL2.
