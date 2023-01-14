@@ -1,0 +1,9 @@
+(extern (defun SDL_Init (flags::ui32)::ui32))
+(extern (defun sleep (time::ui32)::ui32))
+(extern (defun SDL_CreateWindow (title::ui32 x::ui32 y::ui32 w::ui32 h::ui32 flags::ui32)::ui32))
+
+(defun main ()::ui32
+       (SDL_Init 20)
+       (SDL_CreateWindow 0 536805376 536805376 640 480 4)
+       (sleep 10)
+  0)

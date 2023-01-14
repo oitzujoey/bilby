@@ -1,0 +1,4 @@
+(extern (defun putchar (value::ui32)::ui32))
+(defun main ()::ui32
+  (putchar 64)
+  0)
